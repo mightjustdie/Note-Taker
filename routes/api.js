@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const randId = require('../ranid')
 
 const apiRouter = express.Router();
 
@@ -10,10 +11,13 @@ apiRouter.get("/notes", (req, res) => {
 
 apiRouter.post("/notes", (req, res) => {
   const { title, text } = req.body;
+  let id = randId()
+  console.log(id)
 
   const newData = {
     title,
     text,
+    id,
   };
 
   fs.readFile("./db/db.json", "utf8", (err, data) => {
