@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
-const randId = require('../ranid')
+const randId = require("../ranid");
 
 const apiRouter = express.Router();
 
@@ -11,8 +11,8 @@ apiRouter.get("/notes", (req, res) => {
 
 apiRouter.post("/notes", (req, res) => {
   const { title, text } = req.body;
-  let id = randId()
-  console.log(id)
+  let id = randId();
+  console.log(id);
 
   const newData = {
     title,
@@ -34,32 +34,38 @@ apiRouter.post("/notes", (req, res) => {
           err ? console.log(err) : console.log("sucess");
         }
       );
-      res.redirect("/notes");
+      res.send();
     }
   });
 });
 
-apiRouter.delete('/notes/:id', (req, res) => {
-  const id = req.params.id;
+apiRouter.delete("/notes/:id", (req, res) => {
+  let id = req.params.id;
+  console.log(id);
   fs.readFile("./db/db.json", "utf8", (err, data) => {
     if (err) {
       console.log(err);
     } else {
       const parsedData = JSON.parse(data);
-      const index = parsedData.findIndex(note => note.id === id);
-      parsedData.splice(index, 1);
-      fs.writeFile(
-        "./db/db.json",
-        JSON.stringify(parsedData, null, 5),
-        (err) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log("Note deleted successfully.");
-            res.send()
+      const index = parsedData.findIndex((note) => note.id == id);
+      if (index !== -1) {
+        parsedData.splice(index, 1);
+        fs.writeFile(
+          "./db/db.json",
+          JSON.stringify(parsedData, null, 5),
+          (err) => {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log("Note deleted");
+              res.send();
+            }
           }
-        }
-      );
+        );
+      } else {
+        console.log(err);
+        res.send();
+      }
     }
   });
 });
